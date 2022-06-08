@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -58,26 +60,23 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
-            Auth::logout();
-            return response()->json([
-                'status' => true,
-                'message' =>'logout success'
-            ]);
-        } 
-        else{ 
-            return response()->json(['error'=>'Unauthorised'], Response::HTTP_UNAUTHORIZED);
-        } 
+        $request->user()->token()->revoke();
+        return response()->json([
+            'message' => 'Successfully logged out',
+            'status'=>true
+        ]);
     }
 
     public function user(Request $request)
     {
-        if(Auth::attempt(['email' => request('email'), 'password' => request('password')])){ 
-            $user = Auth::user(); 
+        try{
             return response()->json($request->user());
         }
-        else{ 
-            return response()->json(['message' =>'Can not found user'], Response::HTTP_UNAUTHORIZED);
-        } 
+        catch(Exception $e) {
+            report($e);
+     
+            return response()->json(['message' =>'Can not found user'], Response::HTTP_UNAUTHORIZED); 
+            // return false;
+        }
     }
 }
