@@ -14,10 +14,10 @@ class UserController extends Controller
      */
     public function get_users()
     {
-        $a = User::all();
+        $users = User::all();
         return response()->json([
             'success' => true,
-            'list_user' => $a
+            'list_user' => $users
         ]);
     }
 
@@ -73,5 +73,26 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function change_user_name(Request $request)
+    {
+        $user = User::find($request->id);
+        if ($user) {
+            User::find($request->id)->update([
+                'name' => $request->name
+            ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Doi ten thanh cong',
+                'user_name' => $request->name,
+                'user_id' => $user->id,
+            ]);
+        }else
+        {
+            return response()->json([
+                'message' => 'Khong tim thay user'
+            ]);
+        }
     }
 }

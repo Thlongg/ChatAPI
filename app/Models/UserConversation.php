@@ -12,4 +12,5 @@ class UserConversation extends Model
     protected $table = 'user_conversation';
 
     protected $fillable = ['user_id','conversation_id'];
+
 }
