@@ -24,10 +24,10 @@ class ConversationController extends Controller
 
         $user = $request->user()->conversations();
         // dd($user);
-        $getUserConversations = DB::select(DB::raw('SELECT user_conversation.conversation_id,conversations.name_conversation  
-        FROM user_conversation,users,conversations 
-        where user_conversation.conversation_id = conversations.conversation_id
-        and users.id = user_conversation.user_id and users.id = ' . $request->user()->id));
+        $getUserConversations = DB::select(DB::raw('SELECT   user_conversations.conversation_id,conversations.name_conversation
+        FROM user_conversations,users,conversations 
+        where user_conversations.conversation_id = conversations.conversation_id
+        and users.id = user_conversations.user_id and users.id = ' . $request->user()->id));
 
         return response()->json([
             'data' => $getUserConversations,
@@ -39,15 +39,29 @@ class ConversationController extends Controller
     {
         $conversation = Conversation::find($request->conversation_id);
         if ($conversation) {
-            $getUserConversations = DB::select(DB::raw('SELECT messages.message, messages.created_at, messages.user_id  
+            $getUserConversations = DB::select(DB::raw('SELECT users.*, messages.* 
             FROM users,conversations,messages
             where messages.cvs_id = conversations.conversation_id
             and users.id = messages.user_id and conversations.conversation_id = ' . $request->conversation_id));
 
+            $listInfo = [];
+            foreach ($getUserConversations as $info)
+            {
+                $data = (object) [
+                    'content' => $info->message,
+                    'seender' => (object)[
+                        'id'=>$info->user_id,
+                        'name' => $info->name
+                    ],
+                    'created_at' => $info->created_at
+                ];
+                array_push($listInfo,$data);
+            }
+
             return response()->json([
                 'success' => true,
                 'conversation_id' => $request->conversation_id,
-                'data' => $getUserConversations,
+                'data' =>  $listInfo,
             ], Response::HTTP_OK);
         } else {
             return response()->json([
@@ -66,13 +80,17 @@ class ConversationController extends Controller
             where messages.cvs_id = conversations.conversation_id
             and users.id = messages.user_id and conversations.conversation_id = ' . $request->conversation_id));
 
+            $getUserSend = DB::select(DB::raw('SELECT users.name
+            FROM users,conversations,messages
+            where messages.cvs_id = conversations.conversation_id
+            and users.id = messages.user_id and conversations.conversation_id = ' . $request->conversation_id));
+
             $gerUserInConversation = DB::select(DB::raw('SELECT DISTINCT users.*  
             FROM users,conversations,messages
             where messages.cvs_id = conversations.conversation_id
             and users.id = messages.user_id and conversations.conversation_id = ' . $request->conversation_id));
             //Có thể tìm qua bảng trung gian giữa user và conversation
 
-            // dd($gerUserInConversation);
             return response()->json([
                 'success' => true,
                 'conversation_id' => $request->conversation_id,
@@ -109,16 +127,54 @@ class ConversationController extends Controller
 
                 return response()->json([
                     'success' => true,
-                    'message' => 'Join thanh cong',
+                    'message' => 'Join success',
                     'conversation_id' => $request->conversation_id,
                     'conversation' => $infoConversation->name_conversation,
                 ]);
             }
         } else {
             return response()->json([
-                'message' => 'Khong ton tai phong ' . $request->conversation_id
+                'message' => 'room does not exist' . $request->conversation_id
             ]);
         }
+    }
+
+    public function create_conversation(Request $request)
+    {
+        $findUser = User::where('id', $request->user_id)->first();
+        if ($findUser) {
+            Conversation::create([
+                'name_conversation' => $request->name_conversation,
+                'avatar_conversation' => $request->avatar_conversation
+            ]);
+
+            $conversationCreate = Conversation::latest()->first();
+
+            UserConversation::create([
+                'user_id' => $request->user()->id,
+                'conversation_id' => $conversationCreate->conversation_id
+            ]);
+
+            UserConversation::create([
+                'user_id' => $request->user_id,
+                'conversation_id' => $conversationCreate->conversation_id
+            ]);
+
+            return response()->json([
+                'success'  => true,
+                'message' => 'create successful',
+                'conversation_id' => $conversationCreate->conversation_id,
+                'list_user' => [
+                    $request->user(),
+                    $findUser,
+                ]
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'User does not exist'
+            ]);
+        }
+        //tifm conversation moiws nhaats -> them user 
     }
 
     public function add_user_to_conversation(Request $request)
@@ -126,14 +182,14 @@ class ConversationController extends Controller
         $findUser = User::where('id', $request->user_id)->first();
         $findConversation = Conversation::where('conversation_id', $request->conversation_id)->first();
         if ($findConversation && $findUser) {
-            $listConversation = DB::select(DB::raw('SELECT conversation_id FROM user_conversation where user_id =' . $request->user_id));
+            $listConversation = DB::select(DB::raw('SELECT conversation_id FROM user_conversations where user_id =' . $request->user_id));
             $listIdConversation = [];
             foreach ($listConversation as $id_room) {
                 array_push($listIdConversation, $id_room->conversation_id);
             }
             if (in_array($request->conversation_id, $listIdConversation)) {
                 return response()->json([
-                    'message' => 'User da o trong cuoc tro chuyen'
+                    'message' => 'User in conversation'
                 ]);
             } else {
                 UserConversation::create([
@@ -143,7 +199,7 @@ class ConversationController extends Controller
 
                 return response()->json([
                     'success' => true,
-                    'message' => 'them thanh cong user ' . $request->user_id,
+                    'message' => 'add user success ' . $request->user_id,
                     'conversation_id' => $request->conversation_id,
                     'conversation' => $findConversation->name_conversation,
                     'user' => $findUser->name
@@ -151,7 +207,7 @@ class ConversationController extends Controller
             }
         } else {
             return response()->json([
-                'message' => 'Khong ton tai phong hoac user'
+                'message' => 'Room or User does not exist'
             ]);
         }
     }
@@ -167,7 +223,7 @@ class ConversationController extends Controller
             $dataDelete->delete();
             return response()->json([
                 'success' => true,
-                'message' => 'Roi phong ' . $request->conversation_id . ' thanh cong',
+                'message' => 'Leave room' . $request->conversation_id . ' success',
                 'conversation_name' => $findConversation->name_conversation
             ]);
         } else {
@@ -190,7 +246,7 @@ class ConversationController extends Controller
         }
         return response()->json([
             'success' => true,
-            'message' => 'Xoa thanh cong',
+            'message' => 'Delete successful',
             'conversation_name' => $findConversation->name_conversation,
             'conversation_id' => $findConversation->conversation_id,
             'listUser' => $listUser
@@ -206,14 +262,13 @@ class ConversationController extends Controller
             ]);
             return response()->json([
                 'success' => true,
-                'message' => 'Doi ten thanh cong',
+                'message' => 'Rename successful',
                 'conversation_name' => $request->name,
                 'conversation_id' => $conversation->conversation_id,
             ]);
-        }else
-        {
+        } else {
             return response()->json([
-                'message' => 'Khong tim thay phong'
+                'message' => 'Not found conversation'
             ]);
         }
     }
@@ -228,5 +283,4 @@ class ConversationController extends Controller
             'id' => $request->id
         ]);
     }
-
 }

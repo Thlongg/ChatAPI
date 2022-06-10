@@ -15,10 +15,8 @@ return new class extends Migration
     {
         Schema::create('conversations', function (Blueprint $table) {
             $table->increments('conversation_id');
-            $table->integer('id_room')->unsigned();
-            $table->integer('admin_id')->unsigned();
             $table->string('name_conversation');
-            $table->string('avatar_conversation');
+            $table->string('avatar_conversation')->nullable();
             $table->timestamps();
         });
     }

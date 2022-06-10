@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -59,9 +60,25 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update_user_avatar(Request $request)
     {
-        //
+        // dd($request->avatar_user);
+        // $request->user()->update([
+        //     'avatar_user' => $request->avatar_user,
+        // $request->user()->save()
+        // ]);
+        $request->user()->avatar_user = $request->avatar_user;
+        // $request->file('avatar_user')->store('avatar_user');
+        $request->user()->save();
+
+        // Storage::putFile('images', $request->file('avatar_user'));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Change image successful',
+            'user_id' => $request->user()->id,
+            'user_avatar' => $request->user()->avatar_user,
+        ]);
     }
 
     /**
@@ -84,14 +101,14 @@ class UserController extends Controller
             ]);
             return response()->json([
                 'success' => true,
-                'message' => 'Doi ten thanh cong',
+                'message' => 'Rename successful',
                 'user_name' => $request->name,
                 'user_id' => $user->id,
             ]);
         }else
         {
             return response()->json([
-                'message' => 'Khong tim thay user'
+                'message' => 'user does not exist',
             ]);
         }
     }

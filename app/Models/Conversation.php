@@ -13,11 +13,11 @@ class Conversation extends Model
 
     protected  $primaryKey = 'conversation_id';
 
-    protected $fillable = ['id_admin', 'id_room','name_conversation', 'avatar'];
+    protected $fillable = ['admin_id', 'id_room','name_conversation', 'avatar_conversation'];
 
     public function users()
     {
-        return $this->belongsToMany(UserConversation::class);
+        return $this->belongsToMany(User::class, 'user_conversations', 'conversation_id', 'user_id');
     }
 
     public function messages()

@@ -9,7 +9,7 @@ class UserConversation extends Model
 {
     use HasFactory;
 
-    protected $table = 'user_conversation';
+    protected $table = 'user_conversations';
 
     protected $fillable = ['user_id','conversation_id'];
 

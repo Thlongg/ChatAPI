@@ -38,6 +38,7 @@ Route::controller(ConversationController::class)->prefix('chat')->middleware('au
     Route::get('messages', 'get_messages_in_conversation')->name('message.index');
     Route::get('data_conversation', 'get_data_conversation')->name('conversation.data');
     Route::delete('delete_conversation', 'delete_conversation')->name('conversation.delete');
+    Route::post('create_conversation', 'create_conversation')->name('conversation.create');
     Route::post('join_conversation', 'join_conversation')->name('conversation.join');
     Route::post('add_user_to_conversation', 'add_user_to_conversation')->name('conversation.add');
     Route::post('change_conversation_name', 'change_conversation_name')->name('conversation.change');
@@ -53,4 +54,5 @@ Route::controller(UserController::class)->prefix('user')->middleware('auth:api')
     Route::get('get_users', 'get_users')->name('users.list');
     Route::post('search_by_name', 'search_by_name')->name('users.search');
     Route::post('change_user_name', 'change_user_name')->name('users.change');
+    Route::post('update_user_avatar', 'update_user_avatar')->name('users.update');
 });

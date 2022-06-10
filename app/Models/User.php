@@ -50,7 +50,7 @@ class User extends Authenticatable
 
     public function conversations()
     {
-        return $this->belongsToMany(Conversation::class, 'user_conversation', 'user_id', 'conversation_id');
+        return $this->belongsToMany(Conversation::class, 'user_conversations', 'user_id', 'conversation_id');
     }
 
     public function scopeName($query, $name)
