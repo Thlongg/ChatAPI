@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -15,20 +16,32 @@ class UserController extends Controller
      */
     public function get_users()
     {
-        $users = User::all();
-        return response()->json([
-            'success' => true,
-            'list_user' => $users
-        ]);
+        try {
+            $users = User::all();
+            return response()->json([
+                'success' => true,
+                'list_user' => $users
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'msg' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function search_by_name(Request $request)
     {
-        $a = User::name($request->name)->get();
-        return response()->json([
-            'success' => true,
-            'list_user' => $a
-        ]);
+        try {
+            $a = User::name($request->name)->get();
+            return response()->json([
+                'success' => true,
+                'list_user' => $a
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'msg' => $e->getMessage(),
+            ]);
+        }
     }
 
     /**
@@ -62,23 +75,22 @@ class UserController extends Controller
      */
     public function update_user_avatar(Request $request)
     {
-        // dd($request->avatar_user);
-        // $request->user()->update([
-        //     'avatar_user' => $request->avatar_user,
-        // $request->user()->save()
-        // ]);
-        $request->user()->avatar_user = $request->avatar_user;
-        // $request->file('avatar_user')->store('avatar_user');
-        $request->user()->save();
+        try {
+            // Storage::path(Storage::putFile('images', $request->file('avatar_user')));
+            $request->user()->avatar_user = Storage::path(Storage::putFile('images', $request->file('avatar_user')));;
+            $request->user()->save();
 
-        // Storage::putFile('images', $request->file('avatar_user'));
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Change image successful',
-            'user_id' => $request->user()->id,
-            'user_avatar' => $request->user()->avatar_user,
-        ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Change image successful',
+                'user_id' => $request->user()->id,
+                'user_avatar' => $request->user()->avatar_user,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'msg' => $e->getMessage(),
+            ]);
+        }
     }
 
     /**
@@ -94,21 +106,20 @@ class UserController extends Controller
 
     public function change_user_name(Request $request)
     {
-        $user = User::find($request->id);
-        if ($user) {
-            User::find($request->id)->update([
+        try {
+            $request->user()->update([
                 'name' => $request->name
             ]);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Rename successful',
-                'user_name' => $request->name,
-                'user_id' => $user->id,
+                'user_name' => $request->user()->name,
+                'user_id' => $request->user()->id,
             ]);
-        }else
-        {
+        } catch (Exception $e) {
             return response()->json([
-                'message' => 'user does not exist',
+                'msg' => $e->getMessage(),
             ]);
         }
     }

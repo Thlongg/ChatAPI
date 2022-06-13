@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Conversation;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\UserController;
@@ -42,6 +41,7 @@ Route::controller(ConversationController::class)->prefix('chat')->middleware('au
     Route::post('join_conversation', 'join_conversation')->name('conversation.join');
     Route::post('add_user_to_conversation', 'add_user_to_conversation')->name('conversation.add');
     Route::post('change_conversation_name', 'change_conversation_name')->name('conversation.change');
+    Route::post('update_conversation_avatar', 'update_conversation_avatar')->name('conversation.update');
     Route::delete('leave_conversation', 'leave_conversation')->name('conversation.left');
     Route::delete('remove_from_conversation', 'remove_from_conversation')->name('conversation.remove');
 });

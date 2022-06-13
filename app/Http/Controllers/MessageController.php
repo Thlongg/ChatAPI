@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\ConversationResource;
 use App\Models\Message;
+use Exception;
 use Illuminate\Http\Request;
 
 class MessageController extends Controller
@@ -26,23 +27,29 @@ class MessageController extends Controller
      */
     public function send_message(Request $request)
     {
-        Message::create([
-            'message' => $request->message,
-            'user_id' => $request->user()->id,
-            'cvs_id'  => $request->conversation_id
-        ]);
+        try {
+            Message::create([
+                'message' => $request->message,
+                'user_id' => $request->user()->id,
+                'cvs_id'  => $request->conversation_id
+            ]);
 
-        $a = Message::latest('created_at')->first();
-        return response()->json([
-            'success' => true,
-            'message' => $request->message,
-            'timestamp' => $a->created_at,
-            'conversation_id' => $request->conversation_id,
-            'sender' => [
-                'id' => $request->user()->id,
-                'name' => $request->user()->name
-            ]
-        ]);
+            $a = Message::latest('created_at')->first();
+            return response()->json([
+                'success' => true,
+                'message' => $request->message,
+                'timestamp' => $a->created_at,
+                'conversation_id' => $request->conversation_id,
+                'sender' => [
+                    'id' => $request->user()->id,
+                    'name' => $request->user()->name
+                ]
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
 
     /**
