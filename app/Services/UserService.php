@@ -34,7 +34,7 @@ class UserService
     public function search(Request $request)
     {
         try {
-            $listSearch =$this->userRepository->getDataUser()->name($request->name)->get();
+            $listSearch = $this->userRepository->getDataUser()->name($request->name)->get();
             return response()->json([
                 'success' => true,
                 'list_user' => $listSearch
@@ -72,7 +72,8 @@ class UserService
             $request->validate([
                 'avatar_user' => 'required|image|mimes:png,jpg|max:2048',
             ]);
-            $request->user()->avatar_user = Storage::path(Storage::putFile('images', $request->file('avatar_user')));;
+            $request->user()->avatar_user = Storage::path(Storage::putFile('images', $request->file('avatar_user')));
+            ;
             $request->user()->save();
 
             return response()->json([

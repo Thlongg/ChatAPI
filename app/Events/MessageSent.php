@@ -14,7 +14,9 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
 class MessageSent implements ShouldBroadcast
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
     /**
      * User that sent the message

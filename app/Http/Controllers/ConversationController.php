@@ -7,12 +7,11 @@ use Illuminate\Http\Request;
 
 class ConversationController extends Controller
 {
+    protected $conversationService;
 
-    protected  $conversationService;
-
-    public function __construct(ConversationService $conversationService )
+    public function __construct(ConversationService $conversationService)
     {
-        $this->conversationService= $conversationService;
+        $this->conversationService = $conversationService;
     }
 
     public function get_user_login_coversations(Request $request)
@@ -37,7 +36,7 @@ class ConversationController extends Controller
 
     public function create_conversation(Request $request)
     {
-       return $this->conversationService->createConversation($request);
+        return $this->conversationService->createConversation($request);
     }
 
     public function add_user_to_conversation(Request $request)

@@ -183,7 +183,7 @@ return [
         Illuminate\View\ViewServiceProvider::class,
         Laravel\Passport\PassportServiceProvider::class,
         App\Providers\BroadcastServiceProvider::class,
-        
+
 
         /*
          * Package Service Providers...

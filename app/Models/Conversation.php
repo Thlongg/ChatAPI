@@ -11,7 +11,7 @@ class Conversation extends Model
 
     protected $table = 'conversations';
 
-    protected  $primaryKey = 'conversation_id';
+    protected $primaryKey = 'conversation_id';
 
     protected $fillable = ['admin_id', 'id_room','name_conversation', 'avatar_conversation'];
 
@@ -22,6 +22,6 @@ class Conversation extends Model
 
     public function messages()
     {
-        return $this->hasMany(Message::class,'messages','conversation_id','cvs_id');
+        return $this->hasMany(Message::class, 'messages', 'conversation_id', 'cvs_id');
     }
 }

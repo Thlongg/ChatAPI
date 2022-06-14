@@ -9,9 +9,9 @@ use Illuminate\Support\Facades\Auth;
 
 class ChatsController extends Controller
 {
-        public function __construct()
+    public function __construct()
     {
-    $this->middleware('auth');
+        $this->middleware('auth');
     }
 
     /**
@@ -58,8 +58,8 @@ class ChatsController extends Controller
         'message' => $request->input('message')
     ]);
 
-    broadcast(new MessageSent($user, $message))->toOthers();
+        broadcast(new MessageSent($user, $message))->toOthers();
 
-    return ['status' => 'Message Sent!'];
+        return ['status' => 'Message Sent!'];
     }
 }

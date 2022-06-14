@@ -14,10 +14,11 @@ use Illuminate\Support\Facades\Validator;
 class AuthController extends Controller
 {
     public $successStatus = 200;
-    public function login(){ 
-        if(Auth::attempt(['email' => request('email'), 'password' => request('password')])){ 
+    public function login()
+    {
+        if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
             $user = Auth::user();
-            $user['rememberToken'] =  $user->createToken('MyApp')-> accessToken; 
+            $user['rememberToken'] =  $user->createToken('MyApp')-> accessToken;
             return response()->json([
                 'success' => true,
                 'token'=>  $user['rememberToken'],
@@ -26,36 +27,35 @@ class AuthController extends Controller
                     'email'=>$user->email,
                     'id'=> $user->id
                 ]
-            ], $this-> successStatus); 
-        } 
-        else{ 
-            return response()->json(['success'=>'false', 'message'=>'can not login'], 401); 
-        } 
+            ], $this-> successStatus);
+        } else {
+            return response()->json(['success'=>'false', 'message'=>'can not login'], 401);
+        }
     }
-    
-    public function register(Request $request) 
+
+    public function register(Request $request)
     {
-        $validator = Validator::make($request->all(), [ 
-            'name' => 'required', 
-            'email' => 'required|email|unique:users', 
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'email' => 'required|email|unique:users',
             'password' => 'required',
         ]);
-        if ($validator->fails()) { 
+        if ($validator->fails()) {
             return response()->json([
                 'success' => false,
                 'message' => $validator->errors()
-            ], 401);            
+            ], 401);
         }
         $dataCreate = $request->all();
-        $dataCreate['password'] = Hash::make($request->password); 
-        $user = User::create($dataCreate); 
-        $user['rememberToken'] =  $user->createToken('MyApp')-> accessToken; 
+        $dataCreate['password'] = Hash::make($request->password);
+        $user = User::create($dataCreate);
+        $user['rememberToken'] =  $user->createToken('MyApp')-> accessToken;
         return response()->json([
             'success'=>true,
             'user_name'=>$user->name,
             'user_email'=>$user->email,
             'message'=> 'login success'
-        ], $this-> successStatus); 
+        ], $this-> successStatus);
     }
 
     public function logout(Request $request)
@@ -69,13 +69,12 @@ class AuthController extends Controller
 
     public function user(Request $request)
     {
-        try{
+        try {
             return response()->json($request->user());
-        }
-        catch(Exception $e) {
+        } catch (Exception $e) {
             report($e);
-     
-            return response()->json(['message' =>'Can not found user'], Response::HTTP_UNAUTHORIZED); 
+
+            return response()->json(['message' =>'Can not found user'], Response::HTTP_UNAUTHORIZED);
             // return false;
         }
     }

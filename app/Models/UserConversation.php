@@ -12,5 +12,4 @@ class UserConversation extends Model
     protected $table = 'user_conversations';
 
     protected $fillable = ['user_id','conversation_id'];
-
 }

@@ -11,7 +11,7 @@ class Message extends Model
 
     protected $table = 'messages';
 
-    protected  $primaryKey = 'messages_id';
+    protected $primaryKey = 'messages_id';
 
     protected $fillable = [ 'user_id', 'cvs_id','message'];
 
@@ -22,6 +22,6 @@ class Message extends Model
 
     public function conversations()
     {
-        return $this->belongsTo(Conversation::class,'conversations','cvs_id','conversation_id');
+        return $this->belongsTo(Conversation::class, 'conversations', 'cvs_id', 'conversation_id');
     }
 }

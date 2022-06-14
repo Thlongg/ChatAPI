@@ -9,14 +9,16 @@ use App\Models\UserConversation;
 
 class ConversationRepository
 {
-    protected $conversation, $userConversation,$message, $user;
+    protected $conversation;
+    protected $userConversation;
+    protected $message;
+    protected $user;
     public function __construct(
         Conversation $conversation,
         UserConversation $userConversation,
-        Message $message, 
+        Message $message,
         User $user
-    )
-    {
+    ) {
         $this->conversation = $conversation;
         $this->userConversation = $userConversation;
         $this->message = $message;

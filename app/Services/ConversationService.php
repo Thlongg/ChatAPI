@@ -93,10 +93,10 @@ class ConversationService
             where messages.cvs_id = conversations.conversation_id
             and users.id = messages.user_id and conversations.conversation_id = ' . $request->conversation_id));
 
-            //     $getUserSend = DB::select(DB::raw('SELECT users.name
-            // FROM users,conversations,messages
-            // where messages.cvs_id = conversations.conversation_id
-            // and users.id = messages.user_id and conversations.conversation_id = ' . $request->conversation_id));
+                //     $getUserSend = DB::select(DB::raw('SELECT users.name
+                // FROM users,conversations,messages
+                // where messages.cvs_id = conversations.conversation_id
+                // and users.id = messages.user_id and conversations.conversation_id = ' . $request->conversation_id));
 
                 $gerUserInConversation = DB::select(DB::raw('SELECT DISTINCT users.*  
             FROM users,conversations,messages
@@ -199,7 +199,7 @@ class ConversationService
                     'message' => 'Invalid User'
                 ]);
             }
-            //tifm conversation moiws nhaats -> them user 
+            //tifm conversation moiws nhaats -> them user
         } catch (Exception $e) {
             return response()->json([
                 'message' => $e->getMessage(),
@@ -210,7 +210,7 @@ class ConversationService
     public function addUserToConversation(Request $request)
     {
         try {
-            $findUser =$this->conversationRepository->getDataUser()->where('id', $request->user_id)->first();
+            $findUser = $this->conversationRepository->getDataUser()->where('id', $request->user_id)->first();
             $findConversation = $this->dataConversationRepository()->where('conversation_id', $request->conversation_id)->first();
             if ($findConversation && $findUser) {
                 $listConversation = DB::select(DB::raw('SELECT conversation_id FROM user_conversations where user_id =' . $request->user_id));

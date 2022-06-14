@@ -14,7 +14,7 @@ class MessageService
     {
         $this->messageRepository = $messageRepository;
     }
-    
+
     public function send_msg(Request $request)
     {
         try {

@@ -10,7 +10,9 @@ use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens;
+    use HasFactory;
+    use Notifiable;
 
     protected $table = 'users';
     /**
@@ -57,5 +59,4 @@ class User extends Authenticatable
     {
         return $name ? $query->where('name', 'LIKE', "%{$name}%") : null;
     }
-
 }
