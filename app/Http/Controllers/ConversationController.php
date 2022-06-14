@@ -330,6 +330,9 @@ class ConversationController extends Controller
     public function update_conversation_avatar(Request $request)
     {
         try {
+            $request->validate([
+                'avatar_conversation' => 'required|image|mimes:png,jpg|max:2048',
+            ]);
             $conversationUpdate = Conversation::find($request->conversation_id);
             $conversationUpdate->avatar_conversation = Storage::path(Storage::putFile('avatar_conversation', $request->file('avatar_conversation')));
             $conversationUpdate->save();
