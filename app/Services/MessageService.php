@@ -7,6 +7,7 @@ use App\Repositories\MessageRepository;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class MessageService
 {
@@ -22,7 +23,7 @@ class MessageService
         return $this->messageRepository->getDataMessage()->all();
     }
 
-    public function send_msg(Request $request)
+    public function sendMsg(Request $request)
     {
         try {
             $this->messageRepository->getDataMessage()->create([
@@ -43,8 +44,9 @@ class MessageService
                 ]
             ],Response::HTTP_OK);
         } catch (Exception $e) {
+            Log::error($e->getMessage());
             return response()->json([
-                'message' => $e->getMessage(),
+                'message' => 'Error',
             ]);
         }
     }

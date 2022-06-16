@@ -16,7 +16,7 @@ class ConversationController extends Controller
 
     public function getUserLoginCoversations(Request $request)
     {
-        return $this->conversationService->getUserInConversations($request);
+        return $this->conversationService->getConversationsOfUserLogging($request);
     }
 
     public function getMessagesInConversation(Request $request)

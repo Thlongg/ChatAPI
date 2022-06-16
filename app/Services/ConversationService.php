@@ -7,6 +7,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class ConversationService
@@ -23,22 +24,24 @@ class ConversationService
         return $this->conversationRepository->getDataConversation();
     }
 
-    public function getUserInConversations(Request $request)
+    public function getConversationsOfUserLogging(Request $request)
     {
         try {
-            $getUserConversations = DB::select(DB::raw('SELECT user_conversations.conversation_id,conversations.name_conversation
-        FROM user_conversations,users,conversations 
-        where user_conversations.conversation_id = conversations.conversation_id
-        and users.id = user_conversations.user_id and users.id = ' . $request->user()->id));
-
+            $getConversationsOfUser = DB::table('user_conversations')
+                ->join('users', 'user_conversations.user_id', '=', 'users.id')
+                ->join('conversations', 'user_conversations.conversation_id', '=', 'conversations.conversation_id')
+                ->select('user_conversations.conversation_id', 'conversations.name_conversation')
+                ->where('users.id', $request->user()->id)
+                ->get();
             return response()->json([
-                'data' => $getUserConversations,
+                'data' => $getConversationsOfUser,
                 'user' => $request->user(),
-                'status'=> Response::HTTP_OK
+                'status' => Response::HTTP_OK
             ], Response::HTTP_OK);
         } catch (Exception $e) {
+            Log::channel('custom')->info($e->getMessage());
             return response()->json([
-                'message' => $e->getMessage(),
+                'message' => 'Error',
             ]);
         }
     }
@@ -48,13 +51,14 @@ class ConversationService
         try {
             $conversation = $this->dataConversationRepository()->find($request->conversation_id);
             if ($conversation) {
-                $getUserConversations = DB::select(DB::raw('SELECT users.*, messages.* 
-            FROM users,conversations,messages
-            where messages.cvs_id = conversations.conversation_id
-            and users.id = messages.user_id and conversations.conversation_id = ' . $request->conversation_id));
-
+                $getMessagesInConversation = DB::table('messages')
+                    ->join('conversations', 'messages.cvs_id', '=', 'conversations.conversation_id')
+                    ->join('users', 'messages.user_id', '=', 'users.id')
+                    ->select("*")
+                    ->where('conversations.conversation_id', $request->conversation_id)
+                    ->get();
                 $listInfo = [];
-                foreach ($getUserConversations as $info) {
+                foreach ($getMessagesInConversation as $info) {
                     $data = (object) [
                         'content' => $info->message,
                         'seender' => (object)[
@@ -78,8 +82,9 @@ class ConversationService
                 ], Response::HTTP_NOT_FOUND);
             }
         } catch (Exception $e) {
+            Log::error($e->getMessage());
             return response()->json([
-                'message' => $e->getMessage(),
+                'message' => 'Error',
             ]);
         }
     }
@@ -89,23 +94,26 @@ class ConversationService
         try {
             $conversation = $this->dataConversationRepository()->find($request->conversation_id);
             if ($conversation) {
-                $getMsgConversations = DB::select(DB::raw('SELECT messages.messages_id,messages.user_id, messages.message, messages.created_at
-            FROM users,conversations,messages
-            where messages.cvs_id = conversations.conversation_id
-            and users.id = messages.user_id and conversations.conversation_id = ' . $request->conversation_id));
+                $getMessagesInConversation = DB::table('messages')
+                    ->join('conversations', 'messages.cvs_id', '=', 'conversations.conversation_id')
+                    ->join('users', 'messages.user_id', '=', 'users.id')
+                    ->select("messages.messages_id", "messages.user_id", "messages.message", "messages.created_at")
+                    ->where('conversations.conversation_id', $request->conversation_id)
+                    ->get();
 
-
-            $gerUserInConversation = DB::select(DB::raw('SELECT DISTINCT users.*  
-            FROM users,conversations,messages
-            where messages.cvs_id = conversations.conversation_id
-            and users.id = messages.user_id and conversations.conversation_id = ' . $request->conversation_id));
-                //Có thể tìm qua bảng trung gian giữa user và conversation
+                $getUserInConversation = DB::table('messages')
+                    ->select('users.*')
+                    ->join('conversations', 'conversations.conversation_id', '=', 'messages.cvs_id')
+                    ->join('users', 'users.id', '=', 'messages.user_id')
+                    ->where('conversations.conversation_id', $request->conversation_id)
+                    ->distinct()
+                    ->get();
 
                 return response()->json([
                     'success' => true,
                     'conversation_id' => $request->conversation_id,
-                    'message' => $getMsgConversations,
-                    'member' => $gerUserInConversation
+                    'message' => $getMessagesInConversation,
+                    'member' => $getUserInConversation
                 ], Response::HTTP_OK);
             } else {
                 return response()->json([
@@ -114,8 +122,9 @@ class ConversationService
                 ], Response::HTTP_NOT_FOUND);
             }
         } catch (Exception $e) {
+            Log::error($e->getMessage());
             return response()->json([
-                'message' => $e->getMessage(),
+                'message' => 'Error',
             ]);
         }
     }
@@ -126,7 +135,11 @@ class ConversationService
             $findConversation = $this->dataConversationRepository()->where('conversation_id', $request->conversation_id)->first();
             if ($findConversation) {
                 $infoConversation = $this->dataConversationRepository()->where('conversation_id', $request->conversation_id)->first();
-                $listConversation = DB::select(DB::raw('SELECT conversation_id FROM user_conversations where user_id =' . $request->user()->id));
+                $listConversation = DB::table('user_conversations')
+                ->select('conversation_id')
+                ->where('user_id', $request->user()->id)
+                ->get();
+
                 $listIdConversation = [];
                 foreach ($listConversation as $id_room) {
                     array_push($listIdConversation, $id_room->conversation_id);
@@ -146,7 +159,7 @@ class ConversationService
                         'message' => 'Join success',
                         'conversation_id' => $request->conversation_id,
                         'conversation' => $infoConversation->name_conversation,
-                    ],Response::HTTP_OK);
+                    ], Response::HTTP_OK);
                 }
             } else {
                 return response()->json([
@@ -154,8 +167,9 @@ class ConversationService
                 ]);
             }
         } catch (Exception $e) {
+            Log::error($e->getMessage());
             return response()->json([
-                'message' => $e->getMessage(),
+                'message' => 'Error',
             ]);
         }
     }
@@ -190,16 +204,16 @@ class ConversationService
                         $request->user(),
                         $findUser,
                     ]
-                ],Response::HTTP_CREATED);
+                ], Response::HTTP_CREATED);
             } else {
                 return response()->json([
                     'message' => 'Invalid User'
                 ]);
             }
-            //tim conversation moi nhat -> them user
         } catch (Exception $e) {
+            Log::error($e->getMessage());
             return response()->json([
-                'message' => $e->getMessage(),
+                'message' => 'Error',
             ]);
         }
     }
@@ -210,7 +224,10 @@ class ConversationService
             $findUser = $this->conversationRepository->getDataUser()->where('id', $request->user_id)->first();
             $findConversation = $this->dataConversationRepository()->where('conversation_id', $request->conversation_id)->first();
             if ($findConversation && $findUser) {
-                $listConversation = DB::select(DB::raw('SELECT conversation_id FROM user_conversations where user_id =' . $request->user_id));
+                $listConversation = DB::table('user_conversations')
+                ->select('conversation_id')
+                ->where('user_id', $request->user_id)
+                ->get();
                 $listIdConversation = [];
                 foreach ($listConversation as $id_room) {
                     array_push($listIdConversation, $id_room->conversation_id);
@@ -231,16 +248,17 @@ class ConversationService
                         'conversation_id' => $request->conversation_id,
                         'conversation' => $findConversation->name_conversation,
                         'user' => $findUser->name
-                    ],Response::HTTP_CREATED);
+                    ], Response::HTTP_CREATED);
                 }
             } else {
                 return response()->json([
                     'message' => 'Room or User does not exist'
-                ],Response::HTTP_NO_CONTENT);
+                ], Response::HTTP_BAD_REQUEST);
             }
         } catch (Exception $e) {
+            Log::error($e->getMessage());
             return response()->json([
-                'message' => $e->getMessage(),
+                'message' => 'Error',
             ]);
         }
     }
@@ -266,8 +284,9 @@ class ConversationService
                 ]);
             }
         } catch (Exception $e) {
+            Log::error($e->getMessage());
             return response()->json([
-                'message' => $e->getMessage(),
+                'message' => 'Error',
             ]);
         }
     }
@@ -293,8 +312,9 @@ class ConversationService
                 'status' => Response::HTTP_OK
             ], Response::HTTP_OK);
         } catch (Exception $e) {
+            Log::error($e->getMessage());
             return response()->json([
-                'message' => $e->getMessage(),
+                'message' => 'Error',
             ]);
         }
     }
@@ -312,15 +332,16 @@ class ConversationService
                     'message' => 'Rename successful',
                     'conversation_name' => $request->name,
                     'conversation_id' => $conversation->conversation_id,
-                ],Response::HTTP_OK);
+                ], Response::HTTP_OK);
             } else {
                 return response()->json([
                     'message' => 'Not found conversation'
                 ]);
             }
         } catch (Exception $e) {
+            Log::error($e->getMessage());
             return response()->json([
-                'message' => $e->getMessage(),
+                'message' => 'Error',
             ]);
         }
     }
@@ -339,10 +360,11 @@ class ConversationService
                 'message' => 'Change image successful',
                 'conversation_id' => $request->conversation_id,
                 'conversation_avatar' => $conversationUpdate->avatar_conversation,
-            ],Response::HTTP_OK);
+            ], Response::HTTP_OK);
         } catch (Exception $e) {
+            Log::error($e->getMessage());
             return response()->json([
-                'message' => $e->getMessage(),
+                'message' => 'Error',
             ]);
         }
     }
@@ -361,11 +383,12 @@ class ConversationService
                 return response()->json([
                     'success' => false,
                     'msg' => 'can not found id ' . $request->id
-                ],Response::HTTP_OK);
+                ], Response::HTTP_OK);
             }
         } catch (Exception $e) {
+            Log::error($e->getMessage());
             return response()->json([
-                'message' => $e->getMessage(),
+                'message' => 'Error',
             ]);
         }
     }

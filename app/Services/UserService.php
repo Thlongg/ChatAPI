@@ -6,6 +6,7 @@ use App\Repositories\UserRepository;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class UserService
@@ -26,8 +27,9 @@ class UserService
                 'list_user' => $users
             ],Response::HTTP_OK);
         } catch (Exception $e) {
+            Log::error($e->getMessage());
             return response()->json([
-                'msg' => $e->getMessage(),
+                'message' => 'Error',
             ]);
         }
     }
@@ -41,8 +43,9 @@ class UserService
                 'list_user' => $listSearch
             ],Response::HTTP_OK);
         } catch (Exception $e) {
+            Log::error($e->getMessage());
             return response()->json([
-                'msg' => $e->getMessage(),
+                'message' => 'Error',
             ]);
         }
     }
@@ -62,8 +65,9 @@ class UserService
                 'status' => Response::HTTP_OK
             ],Response::HTTP_OK);
         } catch (Exception $e) {
+            Log::error($e->getMessage());
             return response()->json([
-                'msg' => $e->getMessage(),
+                'message' => 'Error',
             ]);
         }
     }
@@ -83,11 +87,12 @@ class UserService
                 'message' => 'Change image successful',
                 'user_id' => $request->user()->id,
                 'user_avatar' => $request->user()->avatar_user,
-                'status' =>Response::HTTP_OK
+                'status' => Response::HTTP_OK
             ],Response::HTTP_OK);
         } catch (Exception $e) {
+            Log::error($e->getMessage());
             return response()->json([
-                'msg' => $e->getMessage(),
+                'message' => 'Error',
             ]);
         }
     }

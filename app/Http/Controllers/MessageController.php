@@ -18,7 +18,7 @@ class MessageController extends Controller
 
     public function sendMessage(Request $request)
     {
-        return $this->messageService->send_msg($request);
+        return $this->messageService->sendMsg($request);
     }
 
     public function index()

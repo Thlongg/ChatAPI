@@ -22,6 +22,6 @@ class Message extends Model
 
     public function conversations()
     {
-        return $this->belongsTo(Conversation::class, 'conversations', 'cvs_id', 'conversation_id');
+        return $this->belongsTo(Conversation::class, 'cvs_id', 'conversation_id');
     }
 }
