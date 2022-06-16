@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Repositories\UserRepository;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 
 class UserService
@@ -23,7 +24,7 @@ class UserService
             return response()->json([
                 'success' => true,
                 'list_user' => $users
-            ]);
+            ],Response::HTTP_OK);
         } catch (Exception $e) {
             return response()->json([
                 'msg' => $e->getMessage(),
@@ -38,7 +39,7 @@ class UserService
             return response()->json([
                 'success' => true,
                 'list_user' => $listSearch
-            ]);
+            ],Response::HTTP_OK);
         } catch (Exception $e) {
             return response()->json([
                 'msg' => $e->getMessage(),
@@ -58,7 +59,8 @@ class UserService
                 'message' => 'Rename successful',
                 'user_name' => $request->user()->name,
                 'user_id' => $request->user()->id,
-            ]);
+                'status' => Response::HTTP_OK
+            ],Response::HTTP_OK);
         } catch (Exception $e) {
             return response()->json([
                 'msg' => $e->getMessage(),
@@ -81,7 +83,8 @@ class UserService
                 'message' => 'Change image successful',
                 'user_id' => $request->user()->id,
                 'user_avatar' => $request->user()->avatar_user,
-            ]);
+                'status' =>Response::HTTP_OK
+            ],Response::HTTP_OK);
         } catch (Exception $e) {
             return response()->json([
                 'msg' => $e->getMessage(),

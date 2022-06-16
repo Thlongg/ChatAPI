@@ -33,7 +33,8 @@ class ConversationService
 
             return response()->json([
                 'data' => $getUserConversations,
-                'user' => $request->user()
+                'user' => $request->user(),
+                'status'=> Response::HTTP_OK
             ], Response::HTTP_OK);
         } catch (Exception $e) {
             return response()->json([
@@ -149,7 +150,7 @@ class ConversationService
                         'message' => 'Join success',
                         'conversation_id' => $request->conversation_id,
                         'conversation' => $infoConversation->name_conversation,
-                    ]);
+                    ],Response::HTTP_OK);
                 }
             } else {
                 return response()->json([
@@ -193,13 +194,13 @@ class ConversationService
                         $request->user(),
                         $findUser,
                     ]
-                ]);
+                ],Response::HTTP_CREATED);
             } else {
                 return response()->json([
                     'message' => 'Invalid User'
                 ]);
             }
-            //tifm conversation moiws nhaats -> them user
+            //tim conversation moi nhat -> them user
         } catch (Exception $e) {
             return response()->json([
                 'message' => $e->getMessage(),
@@ -234,12 +235,12 @@ class ConversationService
                         'conversation_id' => $request->conversation_id,
                         'conversation' => $findConversation->name_conversation,
                         'user' => $findUser->name
-                    ]);
+                    ],Response::HTTP_CREATED);
                 }
             } else {
                 return response()->json([
                     'message' => 'Room or User does not exist'
-                ]);
+                ],Response::HTTP_NO_CONTENT);
             }
         } catch (Exception $e) {
             return response()->json([
@@ -262,7 +263,7 @@ class ConversationService
                     'success' => true,
                     'message' => 'Leave room ' . $request->conversation_id . ' success',
                     'conversation_name' => $findConversation->name_conversation
-                ]);
+                ], Response::HTTP_OK);
             } else {
                 return response()->json([
                     'message' => 'User khong co trong phong'
@@ -292,8 +293,9 @@ class ConversationService
                 'message' => 'Delete successful',
                 'conversation_name' => $findConversation->name_conversation,
                 'conversation_id' => $findConversation->conversation_id,
-                'listUser' => $listUser
-            ]);
+                'listUser' => $listUser,
+                'status' => Response::HTTP_OK
+            ], Response::HTTP_OK);
         } catch (Exception $e) {
             return response()->json([
                 'message' => $e->getMessage(),
@@ -314,7 +316,7 @@ class ConversationService
                     'message' => 'Rename successful',
                     'conversation_name' => $request->name,
                     'conversation_id' => $conversation->conversation_id,
-                ]);
+                ],Response::HTTP_OK);
             } else {
                 return response()->json([
                     'message' => 'Not found conversation'
@@ -341,7 +343,7 @@ class ConversationService
                 'message' => 'Change image successful',
                 'conversation_id' => $request->conversation_id,
                 'conversation_avatar' => $conversationUpdate->avatar_conversation,
-            ]);
+            ],Response::HTTP_OK);
         } catch (Exception $e) {
             return response()->json([
                 'message' => $e->getMessage(),
@@ -363,7 +365,7 @@ class ConversationService
                 return response()->json([
                     'success' => false,
                     'msg' => 'can not found id ' . $request->id
-                ]);
+                ],Response::HTTP_OK);
             }
         } catch (Exception $e) {
             return response()->json([
