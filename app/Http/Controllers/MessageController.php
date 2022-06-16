@@ -16,8 +16,20 @@ class MessageController extends Controller
         $this->messageService = $messageService;
     }
 
-    public function send_message(Request $request)
+    public function sendMessage(Request $request)
     {
         return $this->messageService->send_msg($request);
+    }
+
+    public function index()
+    {
+        $messages = $this->messageService->getAllMessages();
+        return view('chat',compact('messages'));
+    }
+
+    public function send(Request $request)
+    {
+        // dd(1);
+        return $this->messageService->send($request);
     }
 }

@@ -6,7 +6,7 @@
 
 require('./bootstrap');
 
-window.Vue = require('vue').default;
+// window.Vue = require('vue').default;s
 
 /**
  * The following block of code may be used to automatically register your
@@ -19,7 +19,7 @@ window.Vue = require('vue').default;
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+// Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
 
 /**
@@ -33,35 +33,35 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
 // });
 
 
-Vue.component('chat-messages', require('./components/ChatMessages.vue'));
-Vue.component('chat-form', require('./components/ChatForm.vue'));
+// Vue.component('chat-messages', require('./components/ChatMessages.vue'));
+// Vue.component('chat-form', require('./components/ChatForm.vue'));
 
-const app = new Vue({
-    el: '#app',
+// const app = new Vue({
+//     el: '#app',
 
-    data: {
-        messages: [
+//     data: {
+//         messages: [
             
-        ]
-    },
+//         ]
+//     },
 
-    created() {
-        this.fetchMessages();
-    },
+//     created() {
+//         this.fetchMessages();
+//     },
 
-    methods: {
-        fetchMessages() {
-            axios.get('/messages').then(response => {
-                this.messages = response.data;
-            });
-        },
+//     methods: {
+//         fetchMessages() {
+//             axios.get('/messages').then(response => {
+//                 this.messages = response.data;
+//             });
+//         },
 
-        addMessage(message) {
-            this.messages.push(message);
+//         addMessage(message) {
+//             this.messages.push(message);
 
-            axios.post('/messages', message).then(response => {
-              console.log(response.data);
-            });
-        }
-    }
-});
+//             axios.post('/messages', message).then(response => {
+//               console.log(response.data);
+//             });
+//         }
+//     }
+// });

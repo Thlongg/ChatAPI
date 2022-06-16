@@ -14,57 +14,57 @@ class ConversationController extends Controller
         $this->conversationService = $conversationService;
     }
 
-    public function get_user_login_coversations(Request $request)
+    public function getUserLoginCoversations(Request $request)
     {
         return $this->conversationService->getUserInConversations($request);
     }
 
-    public function get_messages_in_conversation(Request $request)
+    public function getMessagesInConversation(Request $request)
     {
         return $this->conversationService->getMsgInConversation($request);
     }
 
-    public function get_data_conversation(Request $request)
+    public function getDataConversation(Request $request)
     {
         return $this->conversationService->getDataConversation($request);
     }
 
-    public function join_conversation(Request $request)
+    public function joinConversation(Request $request)
     {
         return $this->conversationService->joinConversation($request);
     }
 
-    public function create_conversation(Request $request)
+    public function createConversation(Request $request)
     {
         return $this->conversationService->createConversation($request);
     }
 
-    public function add_user_to_conversation(Request $request)
+    public function addUserToConversation(Request $request)
     {
         return $this->conversationService->addUserToConversation($request);
     }
 
-    public function leave_conversation(Request $request)
+    public function leaveConversation(Request $request)
     {
         return $this->conversationService->leaveConversation($request);
     }
 
-    public function remove_from_conversation(Request $request)
+    public function removeFromConversation(Request $request)
     {
         return $this->conversationService->removeFromConversation($request);
     }
 
-    public function change_conversation_name(Request $request)
+    public function changeConversationName(Request $request)
     {
         return $this->conversationService->changeConversationName($request);
     }
 
-    public function update_conversation_avatar(Request $request)
+    public function updateConversationAvatar(Request $request)
     {
         return $this->conversationService->updateAvatar($request);
     }
 
-    public function delete_conversation(Request $request)
+    public function deleteConversation(Request $request)
     {
         return $this->conversationService->deleteConversation($request);
     }

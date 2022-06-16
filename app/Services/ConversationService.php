@@ -94,12 +94,8 @@ class ConversationService
             where messages.cvs_id = conversations.conversation_id
             and users.id = messages.user_id and conversations.conversation_id = ' . $request->conversation_id));
 
-                //     $getUserSend = DB::select(DB::raw('SELECT users.name
-                // FROM users,conversations,messages
-                // where messages.cvs_id = conversations.conversation_id
-                // and users.id = messages.user_id and conversations.conversation_id = ' . $request->conversation_id));
 
-                $gerUserInConversation = DB::select(DB::raw('SELECT DISTINCT users.*  
+            $gerUserInConversation = DB::select(DB::raw('SELECT DISTINCT users.*  
             FROM users,conversations,messages
             where messages.cvs_id = conversations.conversation_id
             and users.id = messages.user_id and conversations.conversation_id = ' . $request->conversation_id));

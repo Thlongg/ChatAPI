@@ -14,23 +14,23 @@ class UserController extends Controller
         $this->userService = $userService;
     }
 
-    public function get_users()
+    public function getUsers()
     {
         return $this->userService->getAllUser();
     }
 
-    public function search_by_name(Request $request)
+    public function searchByName(Request $request)
     {
         return $this->userService->search($request);
     }
 
-    public function update_user_avatar(Request $request)
+    public function updateUserAvatar(Request $request)
     {
-        return $this->userService->change_image($request);
+        return $this->userService->changeImage($request);
     }
 
-    public function change_user_name(Request $request)
+    public function changeUserName(Request $request)
     {
-        return $this->userService->change_name($request);
+        return $this->userService->changeName($request);
     }
 }

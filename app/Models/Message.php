@@ -15,9 +15,9 @@ class Message extends Model
 
     protected $fillable = [ 'user_id', 'cvs_id','message'];
 
-    public function user()
+    public function users()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class,'user_id','id');
     }
 
     public function conversations()

@@ -47,7 +47,7 @@ class UserService
         }
     }
 
-    public function change_name(Request $request)
+    public function changeName(Request $request)
     {
         try {
             $request->user()->update([
@@ -68,7 +68,7 @@ class UserService
         }
     }
 
-    public function change_image(Request $request)
+    public function changeImage(Request $request)
     {
         try {
             $request->validate([
