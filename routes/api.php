@@ -47,7 +47,7 @@ Route::controller(ConversationController::class)->prefix('chat')->middleware('au
     Route::delete('remove_from_conversation', 'removeFromConversation')->name('conversation.remove');
 });
 
-Route::controller(MessageController::class)->group(function () {
+Route::controller(MessageController::class)->middleware('auth:api')->group(function () {
     Route::post('send_message', 'sendMessage')->name('message.send');
 });
 

@@ -24,12 +24,11 @@ class MessageController extends Controller
     public function index()
     {
         $messages = $this->messageService->getAllMessages();
-        return view('chat',compact('messages'));
+        return view('chat', compact('messages'));
     }
 
     public function send(Request $request)
     {
-        // dd(1);
         return $this->messageService->send($request);
     }
 }

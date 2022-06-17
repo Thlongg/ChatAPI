@@ -25,7 +25,7 @@ class UserService
             return response()->json([
                 'success' => true,
                 'list_user' => $users
-            ],Response::HTTP_OK);
+            ], Response::HTTP_OK);
         } catch (Exception $e) {
             Log::error($e->getMessage());
             return response()->json([
@@ -41,7 +41,7 @@ class UserService
             return response()->json([
                 'success' => true,
                 'list_user' => $listSearch
-            ],Response::HTTP_OK);
+            ], Response::HTTP_OK);
         } catch (Exception $e) {
             Log::error($e->getMessage());
             return response()->json([
@@ -63,7 +63,7 @@ class UserService
                 'user_name' => $request->user()->name,
                 'user_id' => $request->user()->id,
                 'status' => Response::HTTP_OK
-            ],Response::HTTP_OK);
+            ], Response::HTTP_OK);
         } catch (Exception $e) {
             Log::error($e->getMessage());
             return response()->json([
@@ -88,7 +88,7 @@ class UserService
                 'user_id' => $request->user()->id,
                 'user_avatar' => $request->user()->avatar_user,
                 'status' => Response::HTTP_OK
-            ],Response::HTTP_OK);
+            ], Response::HTTP_OK);
         } catch (Exception $e) {
             Log::error($e->getMessage());
             return response()->json([

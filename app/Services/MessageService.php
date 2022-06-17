@@ -42,7 +42,7 @@ class MessageService
                     'id' => $request->user()->id,
                     'name' => $request->user()->name
                 ]
-            ],Response::HTTP_OK);
+            ], Response::HTTP_OK);
         } catch (Exception $e) {
             Log::error($e->getMessage());
             return response()->json([
@@ -58,10 +58,6 @@ class MessageService
             'user_id' => $request->user()->id,
             'cvs_id'  => $request->conversation_id
         ]);
-
-        event(
-            $e = new SendMSG($message)
-        );
 
         return redirect()->route('msg.send');
     }
