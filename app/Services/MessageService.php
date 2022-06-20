@@ -18,9 +18,16 @@ class MessageService
         $this->messageRepository = $messageRepository;
     }
 
-    public function getAllMessages()
+    public function getAllMessages($id)
     {
-        return $this->messageRepository->getDataMessage()->all();
+        $getMessagesInConversation =
+            $this->messageRepository->getDataMessage()->join('conversations', 'messages.cvs_id', '=', 'conversations.conversation_id')
+            ->join('users', 'messages.user_id', '=', 'users.id')
+            ->select("messages.messages_id", "messages.user_id", "messages.message", "messages.created_at")
+            ->where('conversations.conversation_id', $id)->oldest('created_at')
+            ->get();
+
+        return $getMessagesInConversation;
     }
 
     public function sendMsg(Request $request)
@@ -51,14 +58,14 @@ class MessageService
         }
     }
 
-    public function send(Request $request)
+    public function send(Request $request, $id)
     {
         $message = $this->messageRepository->getDataMessage()->create([
             'message' => $request->message,
             'user_id' => $request->user()->id,
-            'cvs_id'  => $request->conversation_id
+            'cvs_id'  => $request->id
         ]);
 
-        return redirect()->route('msg.send');
+        return redirect()->route('msg.index', $id);
     }
 }

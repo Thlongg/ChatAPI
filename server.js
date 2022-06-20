@@ -11,14 +11,10 @@ const io = require('socket.io')(server, {
 io.on('connection', (socket) => {
     console.log('connection');
 
-    socket.on('chat message', (msg) => {
-        io.emit('chat message', {msg});
-      });
-
-    socket.on('conversation', (input) => {
-        io.emit('conversation', {input});
+    socket.on('chat message', (msg,userSend) => {
+        io.emit('chat message', msg, userSend);
     });
-        
+    
     socket.on('disconnect', (socket) => {
         console.log('Disconnect');
     });

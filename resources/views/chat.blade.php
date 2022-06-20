@@ -2,10 +2,13 @@
 
 @section('content')
     <div class="container">
-        <div class="row">
+        <div class="row d-flex">
+            <div class="col-md-4">
+                <button class="btn btn-primary">Room: {{ $id }}</button>
+            </div>
             <div class="col-md-8 col-md-offset-2">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Chats</div>
+                    <h2 class="panel-heading">Chats</h2>
 
                     <div id="data" class="panel-body">
                         @foreach ($messages as $message)
@@ -16,9 +19,8 @@
                         @endforeach
                     </div>
                     <div>
-                        <form action="{{ route('msg.send') }}" id="form" method="POST">
+                        <form action="{{ route('msg.send', $id) }}" id="form" method="POST">
                             @csrf
-                            <div>Conversation <input type="text" id="chatInput" name="conversation_id"></div>
                             <div>
                                 Content
                                 <textarea name="message" id="chatMsg" rows="5" style="width: 100%"></textarea>
@@ -37,16 +39,14 @@
                             var data = document.getElementById('data');
 
                             form.addEventListener('submit', function(e) {
-                                if (input.value) {
-                                    socket.emit('conversation', input.value);
-                                    socket.emit('chat message', msg.value);
-                                }
+                                // e.preventDefault();
+                                socket.emit('chat message', msg.value, '{{Auth::user()->name}}');
                             });
 
-                            socket.on('chat message', function(msg) {
+                            socket.on('chat message', function(msg, name) {
                                 data.innerHTML = data.innerHTML + `<div id="chat-content">
-                                                        <strong>{{ $message->users->name }}: </strong>
-                                                        <span>${msg.msg}</span>
+                                                        <strong>${name}: </strong>
+                                                        <span>${msg}</span>
                                                     </div>`;
                             });
                         </script>
